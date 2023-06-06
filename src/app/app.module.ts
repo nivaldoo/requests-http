@@ -5,6 +5,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { CursoResolverGuard } from './cursos/guards/curso-resolver.guard';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,7 @@ import { AppComponent } from './app.component';
     HttpClientModule,
     ModalModule.forRoot()
   ],
-  providers: [],
+  providers: [CursoResolverGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
