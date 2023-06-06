@@ -6,6 +6,7 @@ import { AlertModalService } from 'src/app/shared/alert-modal.service';
 import { catchError, map, switchMap } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { Curso } from '../curso';
+import { IfStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-cursos-form',
@@ -72,16 +73,46 @@ export class CursosFormComponent implements OnInit {
 
   onSubmit() {
     this.submited = true;
-    console.log('this.form)');
+
+    let msgSuccess = 'Curso criado com sucesso!';
+    let msgError = 'Não foi possível criar o curso.';
+
+    if (this.form.value.id) {
+      msgSuccess = 'Curso atualizado com sucesso!';
+      msgError = 'Não foi possível atualizar o curso.';
+    }
+
     if (this.form.valid) {
-      console.log(this.form.value);
-      this.service.create(this.form.value).subscribe(
-        (next) => {
-          this.modal.showAlertSuccess('Curso criado com sucesso!');
+      this.service.save(this.form.value).subscribe(
+        next => {
+          this.modal.showAlertSuccess(msgSuccess);
           this.location.back();
         },
-        (error) => this.modal.showAlertDanger('Não foi possível criar o curso')
-      );
+        error => {
+          this.modal.showAlertDanger(msgError);
+        }
+      )
+
+      // if (this.form.value.id) {
+      //   this.service.update(this.form.value).subscribe(
+      //     next => {
+      //       this.modal.showAlertSuccess('Curso atualizado com sucesso!');
+      //       this.location.back();
+      //     },
+      //     error =>
+      //       this.modal.showAlertDanger('Não foi possível atualizar o curso'),
+      //     () => console.log('atualizado')
+      //   );
+      // } else {
+      //   this.service.create(this.form.value).subscribe(
+      //     (next) => {
+      //       this.modal.showAlertSuccess('Curso criado com sucesso!');
+      //       this.location.back();
+      //     },
+      //     (error) =>
+      //       this.modal.showAlertDanger('Não foi possível criar o curso')
+      //   );
+      // }
     }
   }
 

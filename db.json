@@ -2,11 +2,11 @@
   "cursos": [
     {
       "id": 1,
-      "nome": "Angular"
+      "nome": "Angular 23"
     },
     {
-      "nome": "Java",
-      "id": 3
+      "id": 3,
+      "nome": "Java33"
     },
     {
       "nome": "Java",
@@ -59,6 +59,10 @@
     {
       "id": 16,
       "nome": "Daniela"
+    },
+    {
+      "id": 17,
+      "nome": "Curso Novo"
     }
   ]
 }
