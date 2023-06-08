@@ -16,6 +16,7 @@ import { AlertModalComponent } from 'src/app/alert-modal/alert-modal.component';
 import { AlertModalService } from 'src/app/shared/alert-modal.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { emptyCurso } from 'common/helper';
+import { error } from 'console';
 
 @Component({
   selector: 'app-cursos-lista',
@@ -79,37 +80,59 @@ export class CursosListaComponent implements OnInit {
       'Tem certeza que deseja remover esse curso?'
     );
 
-    result$.asObservable().pipe(
-      take(1),
-      switchMap(result => result ? this.service.remove(curso.id) : EMPTY)
-    )
-    .subscribe(
-      (next) => {
-        console.log('cheguei')
+    result$
+      .asObservable()
+      .pipe(
+        take(1),
+        switchMap((result) => (result ? this.service.remove(curso.id) : EMPTY)),
+        catchError(_ => {
+          this.alertService.showAlertDanger(
+            'Erro ao remover curso. Tente novamente.2'
+          );
+          this.onDeclineDelete();
+          return EMPTY;
+        })
+      )
+      .subscribe(_ => {
+        this.alertService.showAlertSuccess('Curso removido com sucesso');
         this.onRefresh();
-      },
-      (error) => {
-        this.alertService.showAlertDanger(
-          'Erro ao remover curso. Tente novamente.'
-        );
-      }
-    )
+      });
   }
 
   onConfirmDelete() {
     console.log('confirm');
-    this.service.remove(this.cursoSelecionado?.id).subscribe(
-      (next) => {
-        this.onRefresh();
-        this.onDeclineDelete();
-      },
-      (error) => {
-        this.alertService.showAlertDanger(
-          'Erro ao remover curso. Tente novamente.'
-        );
-        this.onDeclineDelete();
-      }
-    );
+    this.service
+      .remove(this.cursoSelecionado?.id)
+      // .pipe(
+      //   catchError((e) => {
+      //     this.alertService.showAlertDanger(
+      //       'Erro ao remover curso. Tente novamente.2'
+      //     );
+      //     this.onDeclineDelete();
+      //     return EMPTY;
+      //   })
+      // )
+      .subscribe(
+        //   n => {
+        //   this.onRefresh();
+        //   this.onDeclineDelete();
+        // }
+        {
+          next(value) {
+            super.onRefresh();
+            super.onDeclineDelete();
+          },
+          error(err) {
+            super.alertService.showAlertDanger(
+              'Erro ao remover curso. Tente novamente.2'
+            );
+            super.onDeclineDelete();
+          },
+          complete() {
+            console.log('opa');
+          },
+        }
+      );
   }
 
   onDeclineDelete() {
